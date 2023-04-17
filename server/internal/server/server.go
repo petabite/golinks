@@ -3,6 +3,7 @@ package server
 import (
 	"net/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/petabite/golinks/internal/controllers"
 	"github.com/petabite/golinks/internal/database"
@@ -25,7 +26,13 @@ func Start() {
 	controller := controllers.NewController(db)
 
 	r := Server{engine: gin.Default(), controller: controller}
-	r.engine.Use(ErrorHandler)
+	r.engine.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"PUT", "PATCH", "POST"},
+		AllowHeaders:     []string{"Origin"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
 	r.bindRoutes()
-	r.engine.Run()
+	r.engine.Run(":9888")
 }
