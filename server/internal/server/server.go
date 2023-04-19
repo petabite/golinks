@@ -28,7 +28,7 @@ func Start() {
 	r := Server{engine: gin.Default(), controller: controller}
 	r.engine.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
-		AllowMethods:     []string{"PUT", "PATCH", "POST"},
+		AllowMethods:     []string{"GET", "PUT", "DELETE", "POST"},
 		AllowHeaders:     []string{"Origin"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,

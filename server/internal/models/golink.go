@@ -14,6 +14,7 @@ type GoLink struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 	Name      string    `json:"name" gorm:"unique;not null;"`
 	Target    string    `json:"target" gorm:"not null;"`
+	// Visits    int       `json:"visits" gorm:"default:0;"` TODO: Add visits
 }
 
 func (g *GoLink) BeforeCreate(tx *gorm.DB) (err error) {

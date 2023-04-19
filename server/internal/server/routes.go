@@ -29,6 +29,11 @@ func (s *Server) bindRoutes() {
 			return
 		}
 
+		if golink.Name == "" || golink.Target == "" {
+			c.JSON(http.StatusBadRequest, "'name' and 'target' are required")
+			return
+		}
+
 		newGoLink, err := s.controller.CreateGoLink(golink.Name, golink.Target)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, err.Error())
