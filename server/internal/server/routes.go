@@ -8,11 +8,22 @@ import (
 )
 
 func (s *Server) bindRoutes() {
+	// Serve client
+	s.engine.GET("/links", func(c *gin.Context) {
+		c.FileFromFS("./static/index.html", http.FS(clientStatic))
+	})
+
 	// Resolve GoLink
 	s.engine.GET("/:name", func(c *gin.Context) {
 		name := c.Param("name")
 		golink := s.controller.GetGoLink(name)
-		c.Redirect(http.StatusMovedPermanently, golink.Target)
+		var redirectLocation string
+		if golink == nil {
+			redirectLocation = "/links" // TODO: query string to autofill name in ui
+		} else {
+			redirectLocation = golink.Target
+		}
+		c.Redirect(http.StatusMovedPermanently, redirectLocation)
 	})
 
 	// Get all GoLinks
@@ -23,6 +34,7 @@ func (s *Server) bindRoutes() {
 
 	// Create GoLink
 	s.engine.POST("/link", func(c *gin.Context) {
+		// TODO: make new struct for request body
 		var golink models.GoLink
 		if err := c.BindJSON(&golink); err != nil {
 			c.JSON(http.StatusBadRequest, err.Error())

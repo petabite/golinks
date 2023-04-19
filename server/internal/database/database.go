@@ -6,8 +6,8 @@ import (
 	"gorm.io/gorm"
 )
 
-func NewConn() *gorm.DB {
-	db, err := gorm.Open(sqlite.Open("golinks.sqlite"), &gorm.Config{})
+func NewConn(dbPath string) *gorm.DB {
+	db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}

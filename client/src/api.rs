@@ -3,7 +3,8 @@ use serde_json::json;
 
 use crate::GoLink;
 
-static API_URL: &str = "http://127.0.01:9888/link";
+// TODO: dev/prod url
+static API_URL: &str = "http://go/link";
 
 pub async fn get_all_golinks() -> Vec<GoLink> {
     Request::get(&API_URL)

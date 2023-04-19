@@ -36,7 +36,6 @@ func (c *Controller) GetAllGoLinks() []models.GoLink {
 func (c *Controller) GetGoLink(name string) *models.GoLink {
 	var golink *models.GoLink
 	tx := c.db.Where("name = ?", name).First(&golink)
-	fmt.Println(tx.Error)
 	if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
 		return nil
 	}

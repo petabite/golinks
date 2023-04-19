@@ -124,6 +124,7 @@ fn App() -> Html {
                 <input style="margin:0" type="text" placeholder="paste a url here..." oninput={target_on_input} onkeydown={&on_key_down} />
                 <button style="margin:0" onclick={handle_go_click} >{"go!"}</button>
             </div>
+            // TODO: request error <span style="color: red;">{"Create a link to any URL"}</span>
             <h3 style="margin-top:40px;">{"Your Links"}</h3>
             <table>
                 <thead>
