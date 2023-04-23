@@ -75,7 +75,6 @@ pub fn CreateForm(props: &CreateFormProps) -> Html {
 
     let on_key_down = {
         let create_golink = create_golink.clone();
-
         Callback::from(move |e: KeyboardEvent| {
             let create_golink = create_golink.clone();
             if e.key() == "Enter" {

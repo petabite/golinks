@@ -145,7 +145,6 @@ pub fn GoLinksTable(props: &GoLinksTableProps) -> Html {
                     <tr>
                         {
                         vec!["Name", "URL", "Total Visits", "Actions"].iter().map(|col| html! {
-
                             <th class={th_style.clone()}>{col}</th>
                     }).collect::<Html>()}
                     </tr>
