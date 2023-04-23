@@ -1,5 +1,5 @@
-.PHONY: run
-run:
+.PHONY: dev
+dev:
 	trunk serve
 
 build:

@@ -4,8 +4,12 @@ use serde_json::json;
 use crate::GoLink;
 
 // TODO: dev/prod url
-static API_URL: &str = "http://go/link";
+// static API_URL: &str = "http://go/link";
+static API_URL: &str = "http://localhost:7890/link";
 
+// TODO: clear fields on go link creation
+// TODO: golinks table filtering
+// TODO: golinks table created at
 pub async fn get_all_golinks() -> Vec<GoLink> {
     Request::get(&API_URL)
         .send()
@@ -31,6 +35,7 @@ pub async fn create_golink(name: String, target: String) -> GoLink {
         .unwrap()
 }
 
+// TODO: implement edit golink
 pub async fn edit_golink(name: &str, target: &str) -> GoLink {
     let body = json!({
         "name": name,
