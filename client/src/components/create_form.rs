@@ -49,11 +49,13 @@ pub fn CreateForm(props: &CreateFormProps) -> Html {
         let target: UseStateHandle<String> = target.clone();
         let refetch = refetch.clone();
         move || {
-            let name_string = name.to_string();
-            let target_string = target.to_string();
+            let name = name.clone();
+            let target = target.clone();
             let refetch = refetch.clone();
             wasm_bindgen_futures::spawn_local(async move {
-                api::create_golink(name_string, target_string).await;
+                api::create_golink((*name).clone(), (*target).clone()).await;
+                name.set("".to_string());
+                target.set("".to_string());
                 refetch.emit(());
             });
         }

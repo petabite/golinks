@@ -7,7 +7,6 @@ use crate::GoLink;
 // static API_URL: &str = "http://go/link";
 static API_URL: &str = "http://localhost:7890/link";
 
-// TODO: clear fields on go link creation
 // TODO: golinks table filtering
 // TODO: golinks table created at
 pub async fn get_all_golinks() -> Vec<GoLink> {
