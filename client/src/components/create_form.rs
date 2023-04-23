@@ -1,7 +1,9 @@
 use crate::api;
 use crate::components;
 use components::input::Input;
+use serde::Deserialize;
 use yew::prelude::*;
+use yew_router::prelude::use_location;
 
 #[derive(PartialEq, Properties)]
 pub struct CreateFormProps {
@@ -9,12 +11,25 @@ pub struct CreateFormProps {
     pub refetch: Callback<()>,
 }
 
+#[derive(Debug, Clone, PartialEq, Deserialize)]
+
+struct QueryParams {
+    #[serde(default)]
+    name: String,
+}
+
 #[function_component]
 pub fn CreateForm(props: &CreateFormProps) -> Html {
+    let location = use_location();
+    let initial_name = {
+        match location {
+            Some(location) => location.query::<QueryParams>().unwrap().name,
+            None => "".to_string(),
+        }
+    };
     let CreateFormProps { hostname, refetch } = props;
-    let name = use_state(|| "".to_string());
+    let name = use_state(|| initial_name);
     let target = use_state(|| "".to_string());
-
     let name_on_input = {
         let name = name.clone();
         Callback::from(move |value| {
@@ -61,9 +76,9 @@ pub fn CreateForm(props: &CreateFormProps) -> Html {
     html! {
        <div style="display:flex;width:100%;gap:10px;align-items:center;">
             <span>{&hostname}{"/"}</span>
-            <Input style="margin:0" placeholder="name" oninput={name_on_input} onkeydown={&on_key_down} />
+            <Input style="margin:0" placeholder="name" value={(*name).clone()} oninput={name_on_input} onkeydown={&on_key_down} />
             <span>{"→"}</span>
-            <Input style="margin:0" placeholder="paste a url here..." oninput={target_on_input} onkeydown={&on_key_down} />
+            <Input style="margin:0" placeholder="paste a url here..." value={(*target).clone()} oninput={target_on_input} onkeydown={&on_key_down} />
             <button style="margin:0" onclick={handle_go_click} >{"go!"}</button>
         </div>
         // TODO: request error <span style="color: red;">{"Create a link to any URL"}</span>

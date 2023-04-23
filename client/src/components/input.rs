@@ -4,6 +4,7 @@ use yew::prelude::*;
 
 #[derive(PartialEq, Properties)]
 pub struct InputProps {
+    pub value: AttrValue,
     pub style: AttrValue,
     pub oninput: Callback<String>,
     pub onkeydown: Callback<KeyboardEvent>,
@@ -14,6 +15,7 @@ pub struct InputProps {
 pub fn Input(props: &InputProps) -> Html {
     let InputProps {
         style,
+        value,
         placeholder,
         oninput,
         onkeydown,
@@ -32,6 +34,6 @@ pub fn Input(props: &InputProps) -> Html {
     };
 
     html! {
-        <input style={style} type="text" placeholder={placeholder} oninput={handle_on_input} onkeydown={onkeydown} />
+        <input style={style} type="text" value={value} placeholder={placeholder} oninput={handle_on_input} onkeydown={onkeydown} />
     }
 }

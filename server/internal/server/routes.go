@@ -14,7 +14,7 @@ type RequestBody struct {
 func (s *Server) bindRoutes() {
 	// Serve client
 	s.engine.GET("/links", func(c *gin.Context) {
-		c.FileFromFS("./static/index.html", http.FS(clientStatic))
+		c.FileFromFS("./static/", http.FS(clientStatic))
 	})
 
 	// Resolve GoLink
@@ -23,7 +23,7 @@ func (s *Server) bindRoutes() {
 		golink, err := s.controller.GetGoLink(name)
 		var redirectLocation string
 		if err != nil {
-			redirectLocation = "/links" // TODO: query string to autofill name in ui
+			redirectLocation = "/links?name=" + name
 		} else {
 			redirectLocation = golink.Target
 			err := s.controller.IncrementGoLinkVisit(name)

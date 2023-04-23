@@ -4,6 +4,7 @@ use serde::Deserialize;
 use wasm_bindgen::UnwrapThrowExt;
 use web_sys::window;
 use yew::prelude::*;
+use yew_router::prelude::*;
 
 use components::{create_form::CreateForm, table::GoLinksTable};
 
@@ -20,7 +21,7 @@ pub struct GoLink {
 }
 
 #[function_component]
-fn App() -> Html {
+fn Dashboard() -> Html {
     let location = window().expect_throw("window is undefined").location();
     let hostname = location.hostname().unwrap();
 
@@ -55,6 +56,27 @@ fn App() -> Html {
             <CreateForm hostname={hostname} refetch={&fetch_all_golinks} />
             <GoLinksTable golinks={(*golinks).clone()} refetch={&fetch_all_golinks} />
         </div>
+    }
+}
+
+#[derive(Clone, Routable, PartialEq)]
+enum Route {
+    #[at("/links")]
+    Dashboard,
+}
+
+fn switch(routes: Route) -> Html {
+    match routes {
+        Route::Dashboard => html! { <Dashboard /> },
+    }
+}
+
+#[function_component]
+fn App() -> Html {
+    html! {
+        <BrowserRouter>
+            <Switch<Route> render={switch} />
+        </BrowserRouter>
     }
 }
 
