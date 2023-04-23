@@ -3,9 +3,12 @@ use serde_json::json;
 
 use crate::GoLink;
 
-// TODO: dev/prod url
-// static API_URL: &str = "http://go/link";
-static API_URL: &str = "http://localhost:7890/link";
+static API_URL: &str = {
+    match option_env!("DEV") {
+        Some(_) => "http://localhost:7890/link",
+        None => "/link",
+    }
+};
 
 // TODO: golinks table filtering
 // TODO: golinks table created at

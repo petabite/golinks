@@ -1,6 +1,6 @@
 .PHONY: dev
 dev:
-	trunk serve
+	DEV=true trunk serve
 
 build:
 	trunk build --release
