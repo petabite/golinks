@@ -2,8 +2,6 @@ package server
 
 import (
 	"embed"
-	"io/fs"
-	"net/http"
 	"os"
 	"strconv"
 
@@ -21,37 +19,6 @@ type Server struct {
 
 //go:embed static/*
 var clientStatic embed.FS
-
-func ErrorHandler(c *gin.Context) {
-	err := c.Errors.Last() // Get the last error
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
-	}
-}
-
-// TODO: extract
-// credit: https://github.com/gin-contrib/static/issues/19
-type embedFileSystem struct {
-	http.FileSystem
-}
-
-func (e embedFileSystem) Exists(prefix string, path string) bool {
-	_, err := e.Open(path)
-	if err != nil {
-		return false
-	}
-	return true
-}
-
-func EmbedFolder(fsEmbed embed.FS, targetPath string) static.ServeFileSystem {
-	fsys, err := fs.Sub(fsEmbed, targetPath)
-	if err != nil {
-		panic(err)
-	}
-	return embedFileSystem{
-		FileSystem: http.FS(fsys),
-	}
-}
 
 func Start(port int, dbPath string) {
 	gin.SetMode(gin.ReleaseMode)

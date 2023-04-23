@@ -4,8 +4,12 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/petabite/golinks/internal/models"
 )
+
+type RequestBody struct {
+	Name   string `json:"name"`
+	Target string `json:"target"`
+}
 
 func (s *Server) bindRoutes() {
 	// Serve client
@@ -34,19 +38,18 @@ func (s *Server) bindRoutes() {
 
 	// Create GoLink
 	s.engine.POST("/link", func(c *gin.Context) {
-		// TODO: make new struct for request body
-		var golink models.GoLink
-		if err := c.BindJSON(&golink); err != nil {
+		var request RequestBody
+		if err := c.BindJSON(&request); err != nil {
 			c.JSON(http.StatusBadRequest, err.Error())
 			return
 		}
 
-		if golink.Name == "" || golink.Target == "" {
+		if request.Name == "" || request.Target == "" {
 			c.JSON(http.StatusBadRequest, "'name' and 'target' are required")
 			return
 		}
 
-		newGoLink, err := s.controller.CreateGoLink(golink.Name, golink.Target)
+		newGoLink, err := s.controller.CreateGoLink(request.Name, request.Target)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, err.Error())
 			return
@@ -57,13 +60,13 @@ func (s *Server) bindRoutes() {
 
 	// Update GoLink
 	s.engine.PUT("/link/:name", func(c *gin.Context) {
-		var golink models.GoLink
-		if err := c.BindJSON(&golink); err != nil {
+		var request RequestBody
+		if err := c.BindJSON(&request); err != nil {
 			c.JSON(http.StatusBadRequest, err.Error())
 			return
 		}
 		name := c.Param("name")
-		updatedGoLink, err := s.controller.UpdateGoLink(name, golink.Target)
+		updatedGoLink, err := s.controller.UpdateGoLink(name, request.Target)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, err.Error())
 			return
