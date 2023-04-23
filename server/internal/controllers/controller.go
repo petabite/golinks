@@ -33,19 +33,33 @@ func (c *Controller) GetAllGoLinks() []models.GoLink {
 	return golinks
 }
 
-func (c *Controller) GetGoLink(name string) *models.GoLink {
+func (c *Controller) GetGoLink(name string) (*models.GoLink, error) {
 	var golink *models.GoLink
 	tx := c.db.Where("name = ?", name).First(&golink)
 	if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
-		return nil
+		return nil, fmt.Errorf("GoLink with name '%s' does not exist", name)
+
 	}
-	return golink
+	return golink, nil
+}
+
+func (c *Controller) IncrementGoLinkVisit(name string) error {
+	golink, err := c.GetGoLink(name)
+	if err != nil {
+		return err
+	}
+	golink.Visits++
+	result := c.db.Save(golink)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
 }
 
 func (c *Controller) UpdateGoLink(name, target string) (*models.GoLink, error) {
-	golink := c.GetGoLink(name)
-	if golink == nil {
-		return nil, fmt.Errorf("GoLink with name '%s' does not exist", name)
+	golink, err := c.GetGoLink(name)
+	if err != nil {
+		return nil, err
 	}
 	golink.Target = target
 	result := c.db.Save(golink)
@@ -56,9 +70,9 @@ func (c *Controller) UpdateGoLink(name, target string) (*models.GoLink, error) {
 }
 
 func (c *Controller) DeleteGoLink(name string) error {
-	golink := c.GetGoLink(name)
-	if golink == nil {
-		return fmt.Errorf("GoLink with name '%s' does not exist", name)
+	golink, err := c.GetGoLink(name)
+	if err != nil {
+		return err
 	}
 	c.db.Delete(golink)
 	return nil

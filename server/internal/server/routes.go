@@ -20,12 +20,17 @@ func (s *Server) bindRoutes() {
 	// Resolve GoLink
 	s.engine.GET("/:name", func(c *gin.Context) {
 		name := c.Param("name")
-		golink := s.controller.GetGoLink(name)
+		golink, err := s.controller.GetGoLink(name)
 		var redirectLocation string
-		if golink == nil {
+		if err != nil {
 			redirectLocation = "/links" // TODO: query string to autofill name in ui
 		} else {
 			redirectLocation = golink.Target
+			err := s.controller.IncrementGoLinkVisit(name)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, err.Error())
+				return
+			}
 		}
 		c.Redirect(http.StatusMovedPermanently, redirectLocation)
 	})

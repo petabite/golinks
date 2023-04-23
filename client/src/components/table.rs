@@ -32,6 +32,7 @@ pub fn GoLinksTable(props: &GoLinksTableProps) -> Html {
                     <tr>
                         <th>{"Name"}</th>
                         <th>{"URL"}</th>
+                        <th>{"Total Visits"}</th>
                         <th>{"Actions"}</th>
                     </tr>
                 </thead>
@@ -41,6 +42,7 @@ pub fn GoLinksTable(props: &GoLinksTableProps) -> Html {
                         <tr>
                             <td>{&golink.name}</td>
                             <td>{&golink.target}</td>
+                            <td>{&golink.visits}</td>
                             <td>
                                 <button class="button button-clear" onclick={handle_delete_click(&golink.name)}>{"Delete"}</button>
                             </td>

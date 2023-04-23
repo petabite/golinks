@@ -16,6 +16,7 @@ pub struct GoLink {
     created_at: String,
     #[serde(rename = "updatedAt")]
     updated_at: String,
+    visits: i32,
 }
 
 #[function_component]
