@@ -63,11 +63,14 @@ fn Dashboard() -> Html {
 enum Route {
     #[at("/links")]
     Dashboard,
+    #[at("/")]
+    DashboardRedirect,
 }
 
 fn switch(routes: Route) -> Html {
     match routes {
         Route::Dashboard => html! { <Dashboard /> },
+        Route::DashboardRedirect => html! { <Redirect<Route> to={Route::Dashboard} /> },
     }
 }
 
