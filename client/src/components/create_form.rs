@@ -2,6 +2,7 @@ use crate::api;
 use crate::components;
 use components::input::Input;
 use serde::Deserialize;
+use stylist::yew::use_style;
 use yew::prelude::*;
 use yew_router::prelude::use_location;
 
@@ -91,13 +92,22 @@ pub fn CreateForm(props: &CreateFormProps) -> Html {
         })
     };
 
+    let container_style = use_style!(
+        r#"
+            display:flex;
+            width:100%;
+            gap:10px;
+            align-items:center;
+        "#
+    );
+
     html! {
         <>
-            <div style="display:flex;width:100%;gap:10px;align-items:center;">
+            <div class={container_style}>
                 <span>{&hostname}{"/"}</span>
-                <Input style="margin:0" placeholder="name" value={(*name).clone()} oninput={name_on_input} onkeydown={&on_key_down} />
+                <Input placeholder="name" value={(*name).clone()} oninput={name_on_input} onkeydown={&on_key_down} />
                 <span>{"→"}</span>
-                <Input style="margin:0" placeholder="paste a url here..." value={(*target).clone()} oninput={target_on_input} onkeydown={&on_key_down} />
+                <Input placeholder="paste a url here..." value={(*target).clone()} oninput={target_on_input} onkeydown={&on_key_down} />
                 <button style="margin:0" onclick={handle_go_click} >{"go!"}</button>
             </div>
             <span style="color: red;">{&*error_message}</span>

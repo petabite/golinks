@@ -10,7 +10,6 @@ static API_URL: &str = {
     }
 };
 
-// TODO: golinks table filtering
 async fn make_request(method: Method, url: &str, body: Option<String>) -> Result<String, String> {
     let mut request = Request::new(url).method(method);
     if let Some(body) = body {
@@ -45,7 +44,6 @@ pub async fn create_golink(name: String, target: String) -> Result<GoLink, Strin
     }
 }
 
-// TODO: implement edit golink
 pub async fn edit_golink(name: &str, target: &str) -> Result<GoLink, String> {
     let body = json!({
         "name": name,

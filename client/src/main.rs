@@ -1,12 +1,12 @@
 mod api;
 mod components;
+use components::{create_form::CreateForm, table::GoLinksTable};
 use serde::Deserialize;
+use stylist::yew::use_style;
 use wasm_bindgen::UnwrapThrowExt;
 use web_sys::window;
 use yew::prelude::*;
 use yew_router::prelude::*;
-
-use components::{create_form::CreateForm, table::GoLinksTable};
 
 #[derive(Debug, Clone, PartialEq, Deserialize)]
 pub struct GoLink {
@@ -49,11 +49,23 @@ fn Dashboard() -> Html {
         );
     }
 
+    let container_style = use_style!(
+        r#"
+            margin: 0 auto;
+            max-width: 85rem;
+            display:flex;
+            align-items:center;
+            flex-direction:column;
+        "#
+    );
+    let title_style = use_style!("margin-top:40px;");
+
     html! {
-        <div style="margin: 0 auto;max-width: 80rem;display:flex;align-items:center;flex-direction:column;">
+        <div class={container_style}>
             <title>{&hostname}{"/links"}</title>
             <h1>{&hostname}{"/links"}</h1>
             <CreateForm hostname={hostname} refetch={&fetch_all_golinks} />
+            <h3 class={title_style}>{"Your Links"}</h3>
             <GoLinksTable golinks={(*golinks).clone()} refetch={&fetch_all_golinks} />
         </div>
     }
