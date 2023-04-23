@@ -11,8 +11,6 @@ static API_URL: &str = {
 };
 
 // TODO: golinks table filtering
-// TODO: golinks table created at
-
 async fn make_request(method: Method, url: &str, body: Option<String>) -> Result<String, String> {
     let mut request = Request::new(url).method(method);
     if let Some(body) = body {

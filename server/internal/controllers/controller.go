@@ -29,7 +29,7 @@ func (c *Controller) CreateGoLink(name, target string) (*models.GoLink, error) {
 
 func (c *Controller) GetAllGoLinks() []models.GoLink {
 	var golinks []models.GoLink
-	c.db.Find(&golinks)
+	c.db.Order("updated_at desc").Find(&golinks)
 	return golinks
 }
 
