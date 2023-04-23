@@ -1,4 +1,4 @@
-use gloo_net::http::Request;
+use gloo_net::http::{Method, Request};
 use serde_json::json;
 
 use crate::GoLink;
@@ -12,50 +12,64 @@ static API_URL: &str = {
 
 // TODO: golinks table filtering
 // TODO: golinks table created at
-pub async fn get_all_golinks() -> Vec<GoLink> {
-    Request::get(&API_URL)
-        .send()
-        .await
-        .unwrap()
-        .json()
-        .await
-        .unwrap()
+
+async fn make_request(method: Method, url: &str, body: Option<String>) -> Result<String, String> {
+    let mut request = Request::new(url).method(method);
+    if let Some(body) = body {
+        request = request.body(&body);
+    }
+    let response = request.send().await.unwrap();
+
+    match response.ok() {
+        true => Ok(response.text().await.unwrap()),
+        false => Err(response.text().await.unwrap()),
+    }
 }
 
-pub async fn create_golink(name: String, target: String) -> GoLink {
+pub async fn get_all_golinks() -> Result<Vec<GoLink>, String> {
+    let response = make_request(Method::GET, API_URL, None).await;
+
+    match response {
+        Ok(response) => Ok(serde_json::from_str(&response).unwrap()),
+        Err(err) => Err(err),
+    }
+}
+
+pub async fn create_golink(name: String, target: String) -> Result<GoLink, String> {
     let body = json!({
         "name": name,
         "target": target,
     });
-    Request::post(&API_URL)
-        .body(&body.to_string())
-        .send()
-        .await
-        .unwrap()
-        .json()
-        .await
-        .unwrap()
+    let response = make_request(Method::POST, API_URL, Some(body.to_string())).await;
+    match response {
+        Ok(response) => Ok(serde_json::from_str(&response).unwrap()),
+        Err(err) => Err(err),
+    }
 }
 
 // TODO: implement edit golink
-pub async fn edit_golink(name: &str, target: &str) -> GoLink {
+pub async fn edit_golink(name: &str, target: &str) -> Result<GoLink, String> {
     let body = json!({
         "name": name,
         "target": target,
     });
-    Request::put(format!("{}/{}", &API_URL, &name).as_str())
-        .body(&body.to_string())
-        .send()
-        .await
-        .unwrap()
-        .json()
-        .await
-        .unwrap()
+    let response = make_request(
+        Method::PUT,
+        format!("{}/{}", API_URL, name).as_str(),
+        Some(body.to_string()),
+    )
+    .await;
+    match response {
+        Ok(response) => Ok(serde_json::from_str(&response).unwrap()),
+        Err(err) => Err(err),
+    }
 }
 
-pub async fn delete_golink(name: &str) {
-    Request::delete(format!("{}/{}", &API_URL, &name).as_str())
-        .send()
-        .await
-        .unwrap();
+pub async fn delete_golink(name: &str) -> Result<String, String> {
+    make_request(
+        Method::DELETE,
+        format!("{}/{}", API_URL, name).as_str(),
+        None,
+    )
+    .await
 }

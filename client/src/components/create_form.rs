@@ -30,6 +30,7 @@ pub fn CreateForm(props: &CreateFormProps) -> Html {
     let CreateFormProps { hostname, refetch } = props;
     let name = use_state(|| initial_name);
     let target = use_state(|| "".to_string());
+    let error_message = use_state(|| "".to_string());
     let name_on_input = {
         let name = name.clone();
         Callback::from(move |value| {
@@ -47,23 +48,35 @@ pub fn CreateForm(props: &CreateFormProps) -> Html {
     let create_golink = {
         let name = name.clone();
         let target: UseStateHandle<String> = target.clone();
+        let error_message = error_message.clone();
         let refetch = refetch.clone();
         move || {
             let name = name.clone();
             let target = target.clone();
+            let error_message = error_message.clone();
             let refetch = refetch.clone();
             wasm_bindgen_futures::spawn_local(async move {
-                api::create_golink((*name).clone(), (*target).clone()).await;
-                name.set("".to_string());
-                target.set("".to_string());
-                refetch.emit(());
+                let response = api::create_golink((*name).clone(), (*target).clone()).await;
+                match response {
+                    Ok(_) => {
+                        name.set("".to_string());
+                        target.set("".to_string());
+                        error_message.set("".to_string());
+                        refetch.emit(());
+                    }
+                    Err(e) => {
+                        error_message.set(e);
+                    }
+                }
             });
         }
     };
 
     let on_key_down = {
         let create_golink = create_golink.clone();
+
         Callback::from(move |e: KeyboardEvent| {
+            let create_golink = create_golink.clone();
             if e.key() == "Enter" {
                 create_golink()
             }
@@ -72,17 +85,22 @@ pub fn CreateForm(props: &CreateFormProps) -> Html {
 
     let handle_go_click = {
         let create_golink = create_golink.clone();
-        Callback::from(move |_| create_golink())
+        Callback::from(move |_| {
+            let create_golink = create_golink.clone();
+            create_golink()
+        })
     };
 
     html! {
-       <div style="display:flex;width:100%;gap:10px;align-items:center;">
-            <span>{&hostname}{"/"}</span>
-            <Input style="margin:0" placeholder="name" value={(*name).clone()} oninput={name_on_input} onkeydown={&on_key_down} />
-            <span>{"→"}</span>
-            <Input style="margin:0" placeholder="paste a url here..." value={(*target).clone()} oninput={target_on_input} onkeydown={&on_key_down} />
-            <button style="margin:0" onclick={handle_go_click} >{"go!"}</button>
-        </div>
-        // TODO: request error <span style="color: red;">{"Create a link to any URL"}</span>
+        <>
+            <div style="display:flex;width:100%;gap:10px;align-items:center;">
+                <span>{&hostname}{"/"}</span>
+                <Input style="margin:0" placeholder="name" value={(*name).clone()} oninput={name_on_input} onkeydown={&on_key_down} />
+                <span>{"→"}</span>
+                <Input style="margin:0" placeholder="paste a url here..." value={(*target).clone()} oninput={target_on_input} onkeydown={&on_key_down} />
+                <button style="margin:0" onclick={handle_go_click} >{"go!"}</button>
+            </div>
+            <span style="color: red;">{&*error_message}</span>
+        </>
     }
 }

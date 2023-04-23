@@ -19,7 +19,7 @@ pub fn GoLinksTable(props: &GoLinksTableProps) -> Html {
             let name_string = name.to_string();
             let refetch = refetch.clone();
             wasm_bindgen_futures::spawn_local(async move {
-                api::delete_golink(&name_string).await;
+                api::delete_golink(&name_string).await.unwrap();
                 refetch.emit(());
             });
         })

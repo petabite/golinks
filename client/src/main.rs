@@ -32,7 +32,7 @@ fn Dashboard() -> Html {
         Callback::from(move |_| {
             let golinks = golinks.clone();
             wasm_bindgen_futures::spawn_local(async move {
-                let fetched_golinks: Vec<GoLink> = api::get_all_golinks().await;
+                let fetched_golinks: Vec<GoLink> = api::get_all_golinks().await.unwrap();
                 golinks.set(fetched_golinks);
             });
         })
