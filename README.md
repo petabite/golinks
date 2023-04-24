@@ -2,7 +2,7 @@
 
 golinks for your personal setup
 
-![dashboard](images/go_links.png)
+![dashboard](images/go_links.jpg)
 
 - [Features](#features)
 - [Installation](#installation)
